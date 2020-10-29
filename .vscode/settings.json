@@ -1,0 +1,8 @@
+{
+    "editor.formatOnSave": true,
+    "python.formatting.provider": "black",
+    "python.formatting.blackPath": "home/harshvardhan/.local/share/virtualenvs/IR-Assignment-2-NpkaEHQx/bin/black",
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    "python.linting.pylintPath": "home/harshvardhan/.local/share/virtualenvs/IR-Assignment-2-NpkaEHQx/bin/pylint",
+}
