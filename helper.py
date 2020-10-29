@@ -49,7 +49,9 @@ def perform_lsh():
     shingle_matrix = lsh_search_engine.create_shingle_matrix(shingles)
 
     # Create Signature Matrix by Minhashing
-    signature_matrix = lsh_search_engine.get_signature_matrix(shingle_matrix)
+    signature_matrix = lsh_search_engine.get_signature_matrix(
+        shingle_matrix, len(shingles)
+    )
 
     # Perform Locality Sensitive Hashing
     lsh_search_engine.lsh(signature_matrix)
