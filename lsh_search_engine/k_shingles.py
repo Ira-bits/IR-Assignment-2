@@ -30,6 +30,7 @@ def create_shingles_dataset():
     curr_doc = 1
     for document_name in dir:
         print(f"Parsing Document {curr_doc} out of {docs_len}", end="\r")
+        curr += 1
         with open(os.path.join(DATASET_PATH, document_name), "r") as document:
             document_data = document.read()
             doc_shingles, doc_hashed_shingles = create_shingles(document_data)
@@ -66,6 +67,7 @@ def create_shingle_matrix(shingles):
     curr_doc = 1
     for document_name in dir:
         print(f"Parsing Document {curr_doc} out of {docs_len}", end="\r")
+        curr_doc += 1
         with open(os.path.join(DATASET_PATH, document_name), "r") as document:
             document_data = str(document.read())
             row = create_matrix_row(shingles, document_data)

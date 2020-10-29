@@ -64,4 +64,4 @@ if __name__ == "__main__":
         exit()
 
     # Start the Server process
-    app.run(use_reloader=False)
+    # app.run(use_reloader=False)

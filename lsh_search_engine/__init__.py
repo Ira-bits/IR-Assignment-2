@@ -1,4 +1,4 @@
-""" Pacake containing funcions to implement Locality Sensitive Hashing """
+""" Package containing funcions to implement Locality Sensitive Hashing """
 from .k_shingles import (
     create_shingles,
     create_shingles_dataset,
