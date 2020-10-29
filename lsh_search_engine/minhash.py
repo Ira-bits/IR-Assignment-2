@@ -41,7 +41,7 @@ def get_signature_matrix(matrix):
         for j in range(100):
             a = min_hash_funcs[j][0]
             b = min_hash_funcs[j][1]
-            hash_key = ((a * (i + 1)) + b) % 497
+            hash_key = ((a * (i + 1)) + b) % 249
             for k in range(len(matrix[0])):
                 if matrix[i][k] == 1:
                     if hash_key < sim_matrix[j][k]:

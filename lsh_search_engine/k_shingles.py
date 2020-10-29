@@ -14,7 +14,7 @@ def create_shingles(document_data):
         shingles.add(shingle)
         hashed_shingle = int(sha1(shingle.encode("utf-8")).hexdigest(), 16)
         hashed_shingles.add(hashed_shingle)
-    return shingles, hashed_shingles
+    return (shingles, hashed_shingles)
 
 
 def create_shingles_dataset():
@@ -37,7 +37,7 @@ def create_shingles_dataset():
         shingles.update(doc_shingles)  # Take Union on the two sets
         hashed_shingles.update(doc_hashed_shingles)
     print("Done Generating Shingles!")
-    return shingles, hashed_shingles
+    return (shingles, hashed_shingles)
 
 
 def create_matrix_row(shingles, document_data, single_doc=False):
@@ -72,4 +72,5 @@ def create_shingle_matrix(shingles):
             document_data = str(document.read())
             row = create_matrix_row(shingles, document_data)
             shingle_matrix.append(row)
+    print("Done Generating Shingle Matrix!")
     return shingle_matrix

@@ -45,7 +45,7 @@ def perform_lsh():
     Shingles -> Minhashing -> LSH
     """
     # Create Shingle Matrix
-    shingles = lsh_search_engine.create_shingles_dataset()
+    shingles, hashed_shingles = lsh_search_engine.create_shingles_dataset()
     shingle_matrix = lsh_search_engine.create_shingle_matrix(shingles)
 
     # Create Signature Matrix by Minhashing
