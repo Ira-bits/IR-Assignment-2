@@ -51,7 +51,7 @@ def get_data_for_docId(docId):
 
 def process_query(query):
     """
-    Takes in a query, performs LSH on it and finds similar documents to it in the dataset.
+    Takes in a `query` string, returhs the `buckets` formed by performing LSH on it.
     """
     # Create Shingle Matrix
     shingles, _hashed_shingles = lsh_search_engine.create_shingles(query)
@@ -59,13 +59,16 @@ def process_query(query):
         shingles, query, single_doc=True
     )
 
+    num_shingles = len(shingle_matrix[0])
+
     # Create Signature Matrix by Minhashing
-    signature_matrix = lsh_search_engine.get_signature_matrix(shingle_matrix)
+    signature_matrix = lsh_search_engine.get_signature_matrix(
+        shingle_matrix, num_shingles)
 
     # Perform Locality Sensitive Hashing
-    query_bucket = lsh_search_engine.lsh(signature_matrix)
+    query_buckets = lsh_search_engine.lsh(signature_matrix)
 
-    return query_bucket
+    return query_buckets
 
 
 def perform_lsh():
@@ -88,5 +91,32 @@ def perform_lsh():
     return docs_buckets
 
 
-def find_similar_docs(query_bucket, docs_buckets):
-    pass
+def find_similar_docs(query_buckets, docs_buckets):
+    """
+    Given the `docs_buckets` and the buckets `query_buckets` formed by the query
+    finds all the similar documents to the ones in `query_buckets` in `docs_buckets`.
+    """
+    similar_docs = []
+
+    for q_band_key in query_buckets.keys():
+        for q_bucket_idx, q_bucket_docs in query_buckets[q_band_key].items():
+            if(q_bucket_docs):
+                print(q_band_key)
+                print(q_bucket_idx)
+                print("---")
+                if(q_band_key in docs_buckets and q_bucket_idx in docs_buckets[q_band_key]):
+                    similar_docs.extend(docs_buckets[q_band_key][q_bucket_idx])
+    return similar_docs
+
+
+# Uncomment to test find_similar_docs
+# qb = {
+#     1: {1: [0], 3: [0]},
+#     2: {4: [0]},
+# }
+
+# db = {
+#     1: {1: [0, 1, 2], 2: [3, 4]},
+#     2: {4: [6]}
+# }
+# print(find_similar_docs(qb, db))
