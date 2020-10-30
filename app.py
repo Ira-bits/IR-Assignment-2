@@ -3,6 +3,7 @@
 from flask import Flask, request, jsonify, make_response, render_template
 from flask_cors import CORS
 import os
+import pickle
 from helper import (
     perform_lsh,
     LRUCache,
@@ -78,7 +79,13 @@ if __name__ == "__main__":
         # Raise Error if data set doesn't exist.
         if not os.path.isdir("./dataset"):
             raise Exception("Dataset not found")
-        docs_buckets = perform_lsh()
+        if not os.path.isfile("hash.pkl"):
+            docs_buckets = perform_lsh()
+            f = open("hash.pkl", "wb")
+            pickle.dump(docs_buckets, f)
+        else:
+            f = open("hash.pkl", "rb")
+            docs_buckets = pickle.load(f)
     except Exception as e:
         print(e)
         print("Aborting! Please Try Again.")
