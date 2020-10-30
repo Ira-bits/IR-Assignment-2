@@ -3,7 +3,13 @@
 from flask import Flask, request, jsonify, make_response, render_template
 from flask_cors import CORS
 import os
-from helper import perform_lsh, LRUCache, process_query
+from helper import (
+    perform_lsh,
+    LRUCache,
+    process_query,
+    find_similar_docs,
+    get_data_for_docId,
+)
 
 
 # Initialize Flask app
@@ -15,7 +21,7 @@ app = Flask(
 )
 CORS(app)
 app.config["DEBUG"] = True  # Change to False in Production
-id_dict = {}
+docs_buckets = None
 
 # Initialize Cache
 cache = LRUCache(100)
@@ -33,7 +39,7 @@ def api_search():
     API Route for querying the backend.
 
         * Params - query="<query_string>"
-        * Return Format - [(docID, tf-idf score, title, summary)]
+        * Return Format - [(speciesType, sequence)]
 
     Processes the query -> Looks in cache -> If results not found, Looks in Index -> Returns results
     """
@@ -48,7 +54,22 @@ def api_search():
         response = make_response("Invalid Request Parameters", 400)
         return response
 
-    query_bucket = process_query(query)
+    # Search Query Results in cache
+    cache_search = cache.get(query)
+    if cache_search != -1:
+        results = cache_search
+    else:
+        query_buckets = process_query(query)
+        results = find_similar_docs(query_buckets, docs_buckets)
+        cache.put(query, results)
+
+    results_with_data = []
+    for docId in results:
+        specie_name, dna_seq = get_data_for_docId(docId)
+        results_with_data.append((specie_name, dna_seq))
+
+    # Convert the list of results to JSON format.
+    return jsonify(results_with_data)
 
 
 if __name__ == "__main__":
@@ -57,11 +78,11 @@ if __name__ == "__main__":
         # Raise Error if data set doesn't exist.
         if not os.path.isdir("./dataset"):
             raise Exception("Dataset not found")
-        perform_lsh()
+        docs_buckets = perform_lsh()
     except Exception as e:
         print(e)
         print("Aborting! Please Try Again.")
         exit()
 
     # Start the Server process
-    # app.run(use_reloader=False)
+    app.run(use_reloader=False)

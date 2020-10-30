@@ -7,3 +7,4 @@ from .k_shingles import (
 )
 from .minhash import get_signature_matrix
 from .lsh import lsh
+from .settings import DATASET_PATH
