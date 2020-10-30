@@ -89,6 +89,9 @@ def perform_lsh():
     shingles, _hashed_shingles = lsh_search_engine.create_shingles_dataset()
     shingle_matrix = lsh_search_engine.create_shingle_matrix(shingles)
 
+    f = open("shingles.pkl", "wb")
+    pickle.load(shingles, f)
+
     # Create Signature Matrix by Minhashing
     signature_matrix = lsh_search_engine.get_signature_matrix(
         shingle_matrix, len(shingles)
