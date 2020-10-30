@@ -61,6 +61,12 @@ def create_shingle_matrix(shingles):
     """
     print("Creating Shingle Matrix...")
     shingle_matrix = []
+    shingles_dict = {}
+    cnt = 0
+    for shingle in shingles:
+        shingles_dict[shingle] = cnt
+        cnt += 1
+
     dir = os.listdir(DATASET_PATH)
     dir.sort()
     docs_len = len(dir)
@@ -70,7 +76,14 @@ def create_shingle_matrix(shingles):
         curr_doc += 1
         with open(os.path.join(DATASET_PATH, document_name), "r") as document:
             document_data = str(document.read())
-            row = create_matrix_row(shingles, document_data)
+            row = []
+            doc_shingles = set()
+            for i in range(0, len(document_data) - SHINGLE_SIZE + 1):
+                shingle = document_data[i : i + SHINGLE_SIZE]
+                doc_shingles.add(shingles_dict[shingle])
+            for shingle_ind in doc_shingles:
+                row.append(shingle_ind)
+            row.sort()
             shingle_matrix.append(row)
     print("Done Generating Shingle Matrix!")
     return shingle_matrix

@@ -13,7 +13,7 @@ def random_hash_funcs():
     return hashfuncs
 
 
-def get_signature_matrix(matrix):
+def get_signature_matrix(matrix, num_shingles):
     """
     Generates the similarity matrix of the document based on the technique of min-hashing
 
@@ -32,20 +32,20 @@ def get_signature_matrix(matrix):
     sim_matrix = []
     for i in range(100):
         row = []
-        for j in range(len(matrix[0])):
+        for j in range(num_shingles):
             row.append(1000)
         sim_matrix.append(row)
 
     # Applying min-hash algorithm
     for i in range(len(matrix)):
+        print(f"Parsing Document {i} out of {len(matrix)}", end="\r")
         for j in range(100):
             a = min_hash_funcs[j][0]
             b = min_hash_funcs[j][1]
             hash_key = ((a * (i + 1)) + b) % 249
-            for k in range(len(matrix[0])):
-                if matrix[i][k] == 1:
-                    if hash_key < sim_matrix[j][k]:
-                        sim_matrix[j][k] = hash_key
+            for k in matrix[i]:
+                if hash_key < sim_matrix[j][k]:
+                    sim_matrix[j][k] = hash_key
 
     print("Done Creating Signature Matrix!")
     return sim_matrix
