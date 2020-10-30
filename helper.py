@@ -2,7 +2,7 @@
 
 import lsh_search_engine
 import pickle
-import sys
+import os
 from pathlib import Path
 from collections import OrderedDict
 
@@ -39,12 +39,22 @@ class LRUCache:
             self.cache.popitem(last=False)
 
 
+def get_data_for_docId(docId):
+    """ Given a docId returns the species type and dna sequence """
+    dir = os.listdir(lsh_search_engine.DATASET_PATH)
+    dir.sort()
+    doc_name = dir[docId]
+    document = open(lsh_search_engine.DATASET_PATH + doc_name, "r")
+    dna_seq = document.read()
+    return doc_name, dna_seq
+
+
 def process_query(query):
     """
     Takes in a query, performs LSH on it and finds similar documents to it in the dataset.
     """
     # Create Shingle Matrix
-    shingles, hashed_shingles = lsh_search_engine.create_shingles(query)
+    shingles, _hashed_shingles = lsh_search_engine.create_shingles(query)
     shingle_matrix = lsh_search_engine.create_matrix_row(
         shingles, query, single_doc=True
     )
@@ -64,7 +74,7 @@ def perform_lsh():
     Shingles -> Minhashing -> LSH
     """
     # Create Shingle Matrix
-    shingles, hashed_shingles = lsh_search_engine.create_shingles_dataset()
+    shingles, _hashed_shingles = lsh_search_engine.create_shingles_dataset()
     shingle_matrix = lsh_search_engine.create_shingle_matrix(shingles)
 
     # Create Signature Matrix by Minhashing
@@ -79,10 +89,4 @@ def perform_lsh():
 
 
 def find_similar_docs(query_bucket, docs_buckets):
-    similar_docs = []
-    for band in bucket.keys():
-        for val, docs in query_bucket[band].items():
-            if doc_id in docs:
-                doc_result += docs
-    print(query_bucket)
-    print()
+    pass
