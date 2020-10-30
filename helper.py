@@ -101,9 +101,6 @@ def find_similar_docs(query_buckets, docs_buckets):
     for q_band_key in query_buckets.keys():
         for q_bucket_idx, q_bucket_docs in query_buckets[q_band_key].items():
             if(q_bucket_docs):
-                print(q_band_key)
-                print(q_bucket_idx)
-                print("---")
                 if(q_band_key in docs_buckets and q_bucket_idx in docs_buckets[q_band_key]):
                     similar_docs.extend(docs_buckets[q_band_key][q_bucket_idx])
     return similar_docs
