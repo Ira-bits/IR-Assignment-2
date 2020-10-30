@@ -40,18 +40,26 @@ def create_shingles_dataset():
     return (shingles, hashed_shingles)
 
 
-def create_matrix_row(shingles, document_data, single_doc=False):
+def create_matrix_row(shingles, shingles_dict, document_data, single_doc=False):
     """
     Takes in shingles, document string and returns a row of shingle matrix for that document
     """
     row = []
-    for shingle in shingles:
-        if document_data.find(shingle) == -1:
-            row.append(0)
-        else:
-            row.append(1)
+    row_shingles = set()
+    for i in range(0, len(document_data) - SHINGLE_SIZE + 1):
+        shingle = document_data[i : i + SHINGLE_SIZE]
+        row_shingles.add(shingles_dict[shingle])
+    # print(row_shingles)
+    for shingle_ind in row_shingles:
+        row.append(shingle_ind)
+    row.sort()
+
     if single_doc:
-        return [].append(row)
+        res = []
+        res.append(row)
+        print(res)
+        return res
+
     return row
 
 

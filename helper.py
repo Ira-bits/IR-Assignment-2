@@ -44,7 +44,7 @@ def get_data_for_docId(docId):
     dir = os.listdir(lsh_search_engine.DATASET_PATH)
     dir.sort()
     doc_name = dir[docId]
-    document = open(lsh_search_engine.DATASET_PATH + doc_name, "r")
+    document = open(lsh_search_engine.DATASET_PATH + "/" + doc_name, "r")
     dna_seq = document.read()
     return doc_name, dna_seq
 
@@ -55,15 +55,24 @@ def process_query(query):
     """
     # Create Shingle Matrix
     shingles, _hashed_shingles = lsh_search_engine.create_shingles(query)
+
+    shingles_dict = {}
+    cnt = 0
+    for shingle in shingles:
+        shingles_dict[shingle] = cnt
+        cnt += 1
     shingle_matrix = lsh_search_engine.create_matrix_row(
-        shingles, query, single_doc=True
+        shingles, shingles_dict, query, single_doc=True
     )
 
-    num_shingles = len(shingle_matrix[0])
+    print("Shingles Matrix", shingle_matrix)
+
+    num_shingles = len(shingles)
 
     # Create Signature Matrix by Minhashing
     signature_matrix = lsh_search_engine.get_signature_matrix(
-        shingle_matrix, num_shingles)
+        shingle_matrix, num_shingles
+    )
 
     # Perform Locality Sensitive Hashing
     query_buckets = lsh_search_engine.lsh(signature_matrix)
@@ -100,8 +109,11 @@ def find_similar_docs(query_buckets, docs_buckets):
 
     for q_band_key in query_buckets.keys():
         for q_bucket_idx, q_bucket_docs in query_buckets[q_band_key].items():
-            if(q_bucket_docs):
-                if(q_band_key in docs_buckets and q_bucket_idx in docs_buckets[q_band_key]):
+            if q_bucket_docs:
+                if (
+                    q_band_key in docs_buckets
+                    and q_bucket_idx in docs_buckets[q_band_key]
+                ):
                     similar_docs.extend(docs_buckets[q_band_key][q_bucket_idx])
     return similar_docs
 

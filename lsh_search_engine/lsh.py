@@ -34,8 +34,8 @@ def lsh(sig):
                         curr_band * rows_per_band, (curr_band) * rows_per_band
                     )
                 ]
-            hash = zlib.crc32(bytes(hash_vec)) % NUM_BUCKETS
-            bucket_id = int(hash / FORCE_COLLISION_RATIO)  # Force collisions
+            bucket_id = hash = zlib.crc32(bytes(hash_vec)) % NUM_BUCKETS
+            # bucket_id = int(hash / FORCE_COLLISION_RATIO)  # Force collisions
 
             if local_bucket.get(bucket_id) == None:
                 local_bucket[bucket_id] = set()

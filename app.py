@@ -60,10 +60,11 @@ def api_search():
     if cache_search != -1:
         results = cache_search
     else:
+        print("Processing Non Cache\n")
         query_buckets = process_query(query)
         results = find_similar_docs(query_buckets, docs_buckets)
         cache.put(query, results)
-
+    print("Results", results)
     results_with_data = []
     for docId in results:
         specie_name, dna_seq = get_data_for_docId(docId)
