@@ -39,6 +39,25 @@ class LRUCache:
             self.cache.popitem(last=False)
 
 
+def process_query(query):
+    """
+    Takes in a query, performs LSH on it and finds similar documents to it in the dataset.
+    """
+    # Create Shingle Matrix
+    shingles, hashed_shingles = lsh_search_engine.create_shingles(query)
+    shingle_matrix = lsh_search_engine.create_matrix_row(
+        shingles, query, single_doc=True
+    )
+
+    # Create Signature Matrix by Minhashing
+    signature_matrix = lsh_search_engine.get_signature_matrix(shingle_matrix)
+
+    # Perform Locality Sensitive Hashing
+    query_bucket = lsh_search_engine.lsh(signature_matrix)
+
+    return query_bucket
+
+
 def perform_lsh():
     """
     Uses LSH Search Engine Package functions to perform LSH on given dataset
@@ -54,4 +73,16 @@ def perform_lsh():
     )
 
     # Perform Locality Sensitive Hashing
-    lsh_search_engine.lsh(signature_matrix)
+    docs_buckets = lsh_search_engine.lsh(signature_matrix)
+    print(docs_buckets)
+    return docs_buckets
+
+
+def find_similar_docs(query_bucket, docs_buckets):
+    similar_docs = []
+    for band in bucket.keys():
+        for val, docs in query_bucket[band].items():
+            if doc_id in docs:
+                doc_result += docs
+    print(query_bucket)
+    print()

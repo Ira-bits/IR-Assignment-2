@@ -3,7 +3,7 @@
 from flask import Flask, request, jsonify, make_response, render_template
 from flask_cors import CORS
 import os
-from helper import perform_lsh, LRUCache
+from helper import perform_lsh, LRUCache, process_query
 
 
 # Initialize Flask app
@@ -48,7 +48,7 @@ def api_search():
         response = make_response("Invalid Request Parameters", 400)
         return response
 
-    # TODO: Complete API Endpoint
+    query_bucket = process_query(query)
 
 
 if __name__ == "__main__":
