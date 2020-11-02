@@ -2,8 +2,10 @@
 
 from flask import Flask, request, jsonify, make_response, render_template
 from flask_cors import CORS
+from lsh_search_engine.settings import NUM_ROWS, NUM_BANDS
 import os
 import pickle
+import glob
 from helper import (
     perform_lsh,
     LRUCache,
@@ -74,7 +76,18 @@ def api_search():
     return jsonify(results_with_data)
 
 
+def sim(b, r):
+    sim = (1/b)**(1/r)*100
+    return str(sim)[:4]
+
+
 if __name__ == "__main__":
+    print("Delete all previous pickle files? ( y/n ) :", end=" ")
+    q = input()
+    if q.lower() == "y":
+        print("Deleting pickle files.")
+        for f in glob.glob("*.pkl"):
+            os.remove(f)
 
     try:
         # Raise Error if data set doesn't exist.
@@ -93,13 +106,8 @@ if __name__ == "__main__":
         exit()
 
     # Start the Server process
-    app.run(use_reloader=False)
-    # query = "ATGCCCCAACTAAATACCGCCGTATGACCCACCATAATTACCCCCATACTCCTGACACTATTTCTCGTCACCCAACTAAAAATATTAAATTCAAATTACCATCTACCCCCCTCACCAAAACCCATAAAAATAAAAAACTACAATAAACCCTGAGAACCAAAATGAACGAAAATCTATTCGCTTCATTCGCTGCCCCCACAATCCTAG"
-    # query_buckets = process_query(query)
-    # results = find_similar_docs(query_buckets, docs_buckets)
-    # results_with_data = []
-    # for docId in results:
-    #     specie_name, dna_seq = get_data_for_docId(docId)
-    #     results_with_data.append((specie_name, dna_seq))
 
-    # print(results_with_data)
+    print("[ALGO] Matching all documents with similarity >=",
+          sim(NUM_BANDS, NUM_ROWS), "%")
+
+    app.run(use_reloader=False)

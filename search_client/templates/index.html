@@ -9,19 +9,16 @@
 </head>
 
 <body>
-    <div class="logo-search-container init">
-        <div class="logo init"><a href="./">Meklet</a></div>
-        <form class="search-form">
-            <div class="search-container">
-                <div class="search-input-container">
-                    <textarea type="text" class="search-input" placeholder="Search"></textarea>
-                </div>
-                <button class="search-button">Search</button>
-            </div>
-
-        </form>
+    <div class="container">
+        <div class="query-area">
+            <form action="javascript:handleSearch" class="search-form"></form>
+            <h1 class="logo">DNA Finder</h1>
+            <textarea class="input" id="query"></textarea>
+            <input type="submit" id="submit" value="Search">
+        </div>
+        <hr />
+        <div class="search-results-container"></div>
     </div>
-    <div class="search-results-container"></div>
     <script src="main.js"></script>
 </body>
 
