@@ -7,10 +7,10 @@ def random_hash_funcs():
     hashfuncs = []
     # Assign a seed to get same random numbers for query and dataset
     random.seed(10)
-    for _i in range(0, 100):
+    for _i in range(0, HASH_NUM):
         pair = []
         for _j in range(0, 2):
-            pair.append(random.randint(1, 500))
+            pair.append(random.randint(1, 10 ** 5))
         hashfuncs.append(tuple(pair))
 
     return hashfuncs
@@ -44,7 +44,7 @@ def get_signature_matrix(matrix):
     # Applying min-hash algorithm
     for i in range(len(matrix)):
         print(f"Processing Row {i} out of {len(matrix)}", end="\r")
-        for j in range(100):
+        for j in range(HASH_NUM):
             a = min_hash_funcs[j][0]
             b = min_hash_funcs[j][1]
             for k in matrix[i]:

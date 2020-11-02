@@ -1,6 +1,6 @@
 import math
 import zlib
-from .settings import NUM_BANDS, NUM_BUCKETS, FORCE_COLLISION_RATIO
+from .settings import NUM_BANDS, NUM_ROWS
 
 
 def lsh(sig):
@@ -13,7 +13,6 @@ def lsh(sig):
 
     print("Performing LSH...")
     bucket = {}  # Contains sub buckets for each band
-    rows_per_band = int(math.ceil(len(sig) / NUM_BANDS))
     d = len(sig[0])  # number of documents
 
     for curr_band in range(0, NUM_BANDS):  # For every band calculate the hash
@@ -23,16 +22,12 @@ def lsh(sig):
             try:
                 hash_vec = [
                     sig[row][doc_id]
-                    for row in range(
-                        curr_band * rows_per_band, (curr_band + 1) * rows_per_band
-                    )
+                    for row in range(curr_band * NUM_ROWS, (curr_band + 1) * NUM_ROWS)
                 ]
             except:
                 hash_vec = [
                     sig[row][doc_id]
-                    for row in range(
-                        curr_band * rows_per_band, (curr_band) * rows_per_band
-                    )
+                    for row in range(curr_band * NUM_ROWS, (curr_band) * NUM_ROWS)
                 ]
             bucket_id = "".join(map(str, hash_vec))
 

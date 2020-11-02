@@ -95,7 +95,7 @@ def find_similar_docs(query_buckets, docs_buckets):
     Given the `docs_buckets` and the buckets `query_buckets` formed by the query
     finds all the similar documents to the ones in `query_buckets` in `docs_buckets`.
     """
-    similar_docs = []
+    similar_docs = set()
 
     for q_band_key in query_buckets.keys():
         for q_bucket_idx, q_bucket_docs in query_buckets[q_band_key].items():
@@ -104,7 +104,7 @@ def find_similar_docs(query_buckets, docs_buckets):
                     q_band_key in docs_buckets
                     and q_bucket_idx in docs_buckets[q_band_key]
                 ):
-                    similar_docs.extend(docs_buckets[q_band_key][q_bucket_idx])
+                    similar_docs.update(docs_buckets[q_band_key][q_bucket_idx])
     return similar_docs
 
 
