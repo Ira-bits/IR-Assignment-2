@@ -5,7 +5,7 @@ DATASET_PATH = "dataset"
 SHINGLE_SIZE = 9
 
 # Minhash Constants
-MOD = 10 ^ 5
+MOD = 10 ** 5
 HASH_NUM = 100
 
 # Locality Sensitive Hashing
