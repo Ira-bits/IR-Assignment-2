@@ -52,3 +52,7 @@ hr {
   word-wrap: break-word;
   font-family: monospace;
 }
+
+* {
+  outline: none !important;
+}

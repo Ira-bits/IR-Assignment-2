@@ -88,7 +88,8 @@ if __name__ == "__main__":
         print("Deleting pickle files.")
         for f in glob.glob("*.pkl"):
             os.remove(f)
-
+    print("[ALGO] Matching all documents with similarity >=",
+          sim(NUM_BANDS, NUM_ROWS), "%")
     try:
         # Raise Error if data set doesn't exist.
         if not os.path.isdir("./dataset"):
@@ -106,8 +107,5 @@ if __name__ == "__main__":
         exit()
 
     # Start the Server process
-
-    print("[ALGO] Matching all documents with similarity >=",
-          sim(NUM_BANDS, NUM_ROWS), "%")
 
     app.run(use_reloader=False)
