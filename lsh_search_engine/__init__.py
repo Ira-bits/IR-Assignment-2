@@ -2,7 +2,7 @@
 from .k_shingles import (
     create_shingles,
     create_shingles_dataset,
-    create_matrix_row,
+    create_matrix_query,
     create_shingle_matrix,
 )
 from .minhash import get_signature_matrix

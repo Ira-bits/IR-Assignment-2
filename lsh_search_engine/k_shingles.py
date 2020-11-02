@@ -1,4 +1,5 @@
 import os
+import pickle
 from hashlib import sha1
 from .settings import SHINGLE_SIZE, DATASET_PATH
 
@@ -8,24 +9,20 @@ def create_shingles(document_data):
     Takes in a single document/string sequence and returns it's shingles
     """
     shingles = set()
-    hashed_shingles = set()
     for i in range(0, len(document_data) - SHINGLE_SIZE + 1):
         shingle = document_data[i : i + SHINGLE_SIZE]
         shingles.add(shingle)
-        hashed_shingle = int(sha1(shingle.encode("utf-8")).hexdigest(), 16)
-        hashed_shingles.add(hashed_shingle)
-    return (shingles, hashed_shingles)
+    return shingles
 
 
 def create_shingles_dataset():
     """
-    Returns a set of shingles and hashed shingles for all the documents in the corpus
+    Returns a set of shingles for all the documents in the dataset
     """
     print("Generating Shingles...")
     dir = os.listdir(DATASET_PATH)
     dir.sort()
     shingles = set()
-    hashed_shingles = set()
     docs_len = len(dir)
     curr_doc = 1
     for document_name in dir:
@@ -33,54 +30,63 @@ def create_shingles_dataset():
         curr_doc += 1
         with open(os.path.join(DATASET_PATH, document_name), "r") as document:
             document_data = document.read()
-            doc_shingles, doc_hashed_shingles = create_shingles(document_data)
+            doc_shingles = create_shingles(document_data)
         shingles.update(doc_shingles)  # Take Union on the two sets
-        hashed_shingles.update(doc_hashed_shingles)
+
+    # Storing shingles in file
+    file_obj = open("shingles.pkl", "wb")
+    pickle.dump(shingles, file_obj)
+
     print("Done Generating Shingles!")
-    return (shingles, hashed_shingles)
+    return shingles
 
 
-def create_matrix_row(shingles, shingles_dict, document_data, single_doc=False):
+def create_matrix_query(shingles, shingles_dict, document_data):
     """
-    Takes in shingles, document string and returns a row of shingle matrix for that document
+    Takes in shingles, query string and returns the shingle matrix for the query
     """
-    row = []
-    row_shingles = set()
+    query_shingles = set()
     for i in range(0, len(document_data) - SHINGLE_SIZE + 1):
         shingle = document_data[i : i + SHINGLE_SIZE]
-        row_shingles.add(shingles_dict[shingle])
-    # print(row_shingles)
-    for shingle_ind in row_shingles:
-        row.append(shingle_ind)
+        if shingle in shingles_dict.keys():
+            query_shingles.add(shingles_dict[shingle])  # Store shingle id in the set
+
+    # Convert set to a list
+    row = []
+    for shingle_id in query_shingles:
+        row.append(shingle_id)
     row.sort()
 
-    if single_doc:
-        res = []
-        res.append(row)
-        print(res)
-        return res
-
-    return row
+    # Generate Matrix
+    matrix = []
+    matrix.append(row)
+    return matrix
 
 
 def create_shingle_matrix(shingles):
     """
-    Takes in a set of shingles and returns a matrix Shingles x Documents, indicating the presence or absence of shingles in the documents.
+    Takes in a set of shingles and returns a matrix containing the shingles present in each document
     """
     print("Creating Shingle Matrix...")
     shingle_matrix = []
     shingles_dict = {}
-    cnt = 0
+
+    # Assign id to each shingle
+    shingle_id = 0
     for shingle in shingles:
-        shingles_dict[shingle] = cnt
-        cnt += 1
+        shingles_dict[shingle] = shingle_id
+        shingle_id += 1
+
+    # Store shingle ids
+    file_obj = open("shingle_id.pkl", "wb")
+    pickle.dump(shingles_dict, file_obj)
 
     dir = os.listdir(DATASET_PATH)
-    dir.sort()
+    dir.sort()  # doc_id is taken as the index in the sorted doc_list
     docs_len = len(dir)
     curr_doc = 1
     for document_name in dir:
-        print(f"Parsing Document {curr_doc} out of {docs_len}", end="\r")
+        print(f"Processing Document {curr_doc} out of {docs_len}", end="\r")
         curr_doc += 1
         with open(os.path.join(DATASET_PATH, document_name), "r") as document:
             document_data = str(document.read())
@@ -88,9 +94,10 @@ def create_shingle_matrix(shingles):
             doc_shingles = set()
             for i in range(0, len(document_data) - SHINGLE_SIZE + 1):
                 shingle = document_data[i : i + SHINGLE_SIZE]
-                doc_shingles.add(shingles_dict[shingle])
-            for shingle_ind in doc_shingles:
-                row.append(shingle_ind)
+                doc_shingles.add(shingles_dict[shingle])  # Store shingle id in the set
+            # Convert set to a list
+            for shingle_id in doc_shingles:
+                row.append(shingle_id)
             row.sort()
             shingle_matrix.append(row)
     print("Done Generating Shingle Matrix!")
