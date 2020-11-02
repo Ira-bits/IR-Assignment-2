@@ -94,3 +94,12 @@ if __name__ == "__main__":
 
     # Start the Server process
     app.run(use_reloader=False)
+    # query = "ATGCCCCAACTAAATACCGCCGTATGACCCACCATAATTACCCCCATACTCCTGACACTATTTCTCGTCACCCAACTAAAAATATTAAATTCAAATTACCATCTACCCCCCTCACCAAAACCCATAAAAATAAAAAACTACAATAAACCCTGAGAACCAAAATGAACGAAAATCTATTCGCTTCATTCGCTGCCCCCACAATCCTAG"
+    # query_buckets = process_query(query)
+    # results = find_similar_docs(query_buckets, docs_buckets)
+    # results_with_data = []
+    # for docId in results:
+    #     specie_name, dna_seq = get_data_for_docId(docId)
+    #     results_with_data.append((specie_name, dna_seq))
+
+    # print(results_with_data)

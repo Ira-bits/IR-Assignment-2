@@ -51,28 +51,21 @@ def get_data_for_docId(docId):
 
 def process_query(query):
     """
-    Takes in a `query` string, returhs the `buckets` formed by performing LSH on it.
+    Takes in a `query` string, returns the `buckets` formed by performing LSH on it.
     """
     # Create Shingle Matrix
-    shingles, _hashed_shingles = lsh_search_engine.create_shingles(query)
-
-    shingles_dict = {}
-    cnt = 0
-    for shingle in shingles:
-        shingles_dict[shingle] = cnt
-        cnt += 1
-    shingle_matrix = lsh_search_engine.create_matrix_row(
-        shingles, shingles_dict, query, single_doc=True
+    file_obj = open("shingles.pkl", "rb")
+    shingles = pickle.load(
+        file_obj
+    )  # Assuming that shingles in query is a subset of shingles in entire dataset
+    file_obj = open("shingle_id.pkl", "rb")
+    shingles_dict = pickle.load(file_obj)
+    shingle_matrix = lsh_search_engine.create_matrix_query(
+        shingles, shingles_dict, query
     )
-
-    print("Shingles Matrix", shingle_matrix)
-
-    num_shingles = len(shingles)
 
     # Create Signature Matrix by Minhashing
-    signature_matrix = lsh_search_engine.get_signature_matrix(
-        shingle_matrix, num_shingles
-    )
+    signature_matrix = lsh_search_engine.get_signature_matrix(shingle_matrix)
 
     # Perform Locality Sensitive Hashing
     query_buckets = lsh_search_engine.lsh(signature_matrix)
@@ -86,20 +79,14 @@ def perform_lsh():
     Shingles -> Minhashing -> LSH
     """
     # Create Shingle Matrix
-    shingles, _hashed_shingles = lsh_search_engine.create_shingles_dataset()
+    shingles = lsh_search_engine.create_shingles_dataset()
     shingle_matrix = lsh_search_engine.create_shingle_matrix(shingles)
 
-    f = open("shingles.pkl", "wb")
-    pickle.load(shingles, f)
-
     # Create Signature Matrix by Minhashing
-    signature_matrix = lsh_search_engine.get_signature_matrix(
-        shingle_matrix, len(shingles)
-    )
+    signature_matrix = lsh_search_engine.get_signature_matrix(shingle_matrix)
 
     # Perform Locality Sensitive Hashing
     docs_buckets = lsh_search_engine.lsh(signature_matrix)
-    print(docs_buckets)
     return docs_buckets
 
 
