@@ -48,7 +48,8 @@ def create_matrix_query(shingles, shingles_dict, document_data):
     query_shingles = set()
     for i in range(0, len(document_data) - SHINGLE_SIZE + 1):
         shingle = document_data[i : i + SHINGLE_SIZE]
-        query_shingles.add(shingles_dict[shingle])  # Store shingle id in the set
+        if shingle in shingles_dict.keys():
+            query_shingles.add(shingles_dict[shingle])  # Store shingle id in the set
 
     # Convert set to a list
     row = []
