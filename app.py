@@ -2,10 +2,10 @@
 
 from flask import Flask, request, jsonify, make_response, render_template
 from flask_cors import CORS
-from lsh_search_engine.settings import NUM_ROWS, NUM_BANDS
 import os
 import pickle
 import glob
+from lsh_search_engine.settings import NUM_ROWS, NUM_BANDS
 from helper import (
     perform_lsh,
     LRUCache,
@@ -66,7 +66,7 @@ def api_search():
         query_buckets = process_query(query)
         results = find_similar_docs(query_buckets, docs_buckets)
         cache.put(query, results)
-    print("Results", results)
+
     results_with_data = []
     for docId in results:
         specie_name, dna_seq = get_data_for_docId(docId)
@@ -76,20 +76,23 @@ def api_search():
     return jsonify(results_with_data)
 
 
-def sim(b, r):
-    sim = (1/b)**(1/r)*100
+def calculate_similarity():
+    sim = (1 / NUM_BANDS) ** (1 / NUM_ROWS) * 100
     return str(sim)[:4]
 
 
 if __name__ == "__main__":
-    print("Delete all previous pickle files? ( y/n ) :", end=" ")
-    q = input()
-    if q.lower() == "y":
+    print("Do you want to regenerate LSH Hash Buckets? ( y/n ) :", end=" ")
+    response = input()
+    if response.lower() == "y":
         print("Deleting pickle files.")
         for f in glob.glob("*.pkl"):
             os.remove(f)
-    print("[ALGO] Matching all documents with similarity >=",
-          sim(NUM_BANDS, NUM_ROWS), "%")
+    print(
+        "[ALGO] Matching all documents with similarity >=",
+        calculate_similarity(),
+        "%",
+    )
     try:
         # Raise Error if data set doesn't exist.
         if not os.path.isdir("./dataset"):
